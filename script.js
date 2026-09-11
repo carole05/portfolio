@@ -1,149 +1,333 @@
-const burger = document.querySelector(".burger"),
-  menu = document.querySelector(".menu");
+/* =========================================================
+   PORTFOLIO
+   ========================================================= */
+
+/* =========================================================
+   BURGER MENU
+   ========================================================= */
+
+const burger = document.querySelector(".burger");
+const menu = document.querySelector(".menu");
+
 function setMenu(open) {
+  if (!burger || !menu) return;
+
   menu.classList.toggle("open", open);
   menu.setAttribute("aria-hidden", String(!open));
   burger.setAttribute("aria-expanded", String(open));
+  document.body.classList.toggle("lock", open);
 }
-burger.addEventListener("click", () =>
-  setMenu(!menu.classList.contains("open")),
-);
-document
-  .querySelectorAll(".menu a")
-  .forEach((a) => a.addEventListener("click", () => setMenu(false)));
+
+if (burger && menu) {
+  burger.addEventListener("click", () => {
+    setMenu(!menu.classList.contains("open"));
+  });
+
+  document.querySelectorAll(".menu a").forEach((link) => {
+    link.addEventListener("click", () => {
+      setMenu(false);
+    });
+  });
+}
+
+/* =========================================================
+   PROJECT FILTER
+   ========================================================= */
 
 const cards = [...document.querySelectorAll(".card")];
-document.querySelectorAll(".tab").forEach((btn) =>
-  btn.addEventListener("click", () => {
-    document
-      .querySelectorAll(".tab")
-      .forEach((x) => x.classList.remove("active"));
-    btn.classList.add("active");
-    const f = btn.dataset.filter;
-    cards.forEach((c) =>
-      c.classList.toggle("hidden", f !== "all" && c.dataset.cat !== f),
-    );
-  }),
-);
+const tabs = [...document.querySelectorAll(".tab")];
 
-const modal = document.querySelector(".project-modal"),
-  modalTitle = modal.querySelector("h2"),
-  modalMeta = modal.querySelector(".project-meta"),
-  modalText = modal.querySelector(".project-text"),
-  modalFlow = modal.querySelector(".project-flow");
-function closeProject() {
-  modal.classList.remove("open");
-  modal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("lock");
-}
-cards.forEach((c) =>
-  c.querySelector(".card-open").addEventListener("click", () => {
-    modalTitle.textContent = c.dataset.title;
-    modalMeta.textContent = c.dataset.meta;
-    modalText.textContent = c.dataset.text;
-    modalFlow.innerHTML = "";
-    c.dataset.images.split(",").forEach((src, i) => {
-      const b = document.createElement("button");
-      b.className = "project-shot";
-      b.type = "button";
-      const img = new Image();
-      img.src = src;
-      img.alt = `${c.dataset.title} – Ansicht ${i + 1}`;
-      b.appendChild(img);
-      modalFlow.appendChild(b);
+tabs.forEach((button) => {
+  button.addEventListener("click", () => {
+    tabs.forEach((tab) => {
+      tab.classList.remove("active");
     });
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.classList.add("lock");
-    modal.scrollTop = 0;
-  }),
-);
-modal.querySelector(".modal-close").addEventListener("click", closeProject);
 
-const faqItems = [...document.querySelectorAll(".faq-item")];
-faqItems.forEach((item) => {
-  const q = item.querySelector(".faq-question");
-  q.addEventListener("click", () => {
-    const next = !item.classList.contains("open");
-    item.classList.toggle("open", next);
-    q.setAttribute("aria-expanded", String(next));
+    button.classList.add("active");
+
+    const filter = button.dataset.filter;
+
+    cards.forEach((card) => {
+      const hidden = filter !== "all" && card.dataset.cat !== filter;
+
+      card.classList.toggle("hidden", hidden);
+    });
   });
 });
 
-const lightbox = document.querySelector(".lightbox"),
-  lbImg = lightbox.querySelector("img");
-let lbItems = [],
-  current = 0;
-function uniqueImageItems(root) {
-  const seen = new Set();
-  return [...root.querySelectorAll(".gallery-img, .project-shot")].filter(
-    (b) => {
-      const img = b.querySelector("img");
-      if (!img) return false;
-      const key = img.getAttribute("src");
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    },
-  );
-}
-function showLightboxFrom(button) {
-  const root = button.classList.contains("project-shot")
-    ? modal
-    : document.querySelector(".photo");
-  lbItems = uniqueImageItems(root);
-  const clickedSrc = button.querySelector("img")?.getAttribute("src");
-  current = Math.max(
-    0,
-    lbItems.findIndex(
-      (b) => b.querySelector("img")?.getAttribute("src") === clickedSrc,
-    ),
-  );
-  showCurrent();
-}
-function showCurrent() {
-  if (!lbItems.length) return;
-  current = (current + lbItems.length) % lbItems.length;
-  const img = lbItems[current].querySelector("img");
-  lbImg.src = img.src;
-  lbImg.alt = img.alt;
-  lightbox.classList.add("open");
-  lightbox.setAttribute("aria-hidden", "false");
+/* =========================================================
+   FAQ
+   ========================================================= */
+
+const faqItems = [...document.querySelectorAll(".faq-item")];
+
+faqItems.forEach((item) => {
+  const button = item.querySelector(".faq-question");
+
+  if (!button) return;
+
+  button.addEventListener("click", () => {
+    const isOpen = item.classList.contains("open");
+
+    faqItems.forEach((otherItem) => {
+      const otherButton = otherItem.querySelector(".faq-question");
+
+      otherItem.classList.remove("open");
+
+      if (otherButton) {
+        otherButton.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    if (!isOpen) {
+      item.classList.add("open");
+      button.setAttribute("aria-expanded", "true");
+    }
+  });
+});
+
+/* =========================================================
+   HOME PHOTOGRAPHY LIGHTBOX
+   ========================================================= */
+
+const homeLightbox = document.querySelector(".lightbox");
+
+const homeLightboxImage = homeLightbox?.querySelector("img");
+
+const homeLightboxClose = homeLightbox?.querySelector(".lightbox-close");
+
+const homeLightboxPrev = homeLightbox?.querySelector(".lightbox-prev");
+
+const homeLightboxNext = homeLightbox?.querySelector(".lightbox-next");
+
+const galleryItems = [...document.querySelectorAll(".gallery-img")];
+
+let currentGalleryImage = 0;
+
+function showGalleryImage(index) {
+  if (!homeLightbox || !homeLightboxImage || !galleryItems.length) {
+    return;
+  }
+
+  currentGalleryImage = (index + galleryItems.length) % galleryItems.length;
+
+  const button = galleryItems[currentGalleryImage];
+
+  const image = button.querySelector("img");
+
+  if (!image) return;
+
+  homeLightboxImage.src = image.src;
+  homeLightboxImage.alt = image.alt;
+
+  homeLightbox.classList.add("open");
+
+  homeLightbox.setAttribute("aria-hidden", "false");
+
   document.body.classList.add("lock");
 }
-function closeLightbox() {
-  lightbox.classList.remove("open");
-  lightbox.setAttribute("aria-hidden", "true");
+
+function closeGalleryLightbox() {
+  if (!homeLightbox) return;
+
+  homeLightbox.classList.remove("open");
+
+  homeLightbox.setAttribute("aria-hidden", "true");
+
   document.body.classList.remove("lock");
-  if (modal.classList.contains("open")) document.body.classList.add("lock");
 }
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest(".gallery-img,.project-shot");
-  if (btn) showLightboxFrom(btn);
+
+galleryItems.forEach((button, index) => {
+  button.addEventListener("click", () => {
+    showGalleryImage(index);
+  });
 });
-lightbox
-  .querySelector(".lightbox-close")
-  .addEventListener("click", closeLightbox);
-lightbox.querySelector(".lightbox-prev").addEventListener("click", () => {
-  current--;
-  showCurrent();
-});
-lightbox.querySelector(".lightbox-next").addEventListener("click", () => {
-  current++;
-  showCurrent();
-});
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    if (lightbox.classList.contains("open")) closeLightbox();
-    else if (modal.classList.contains("open")) closeProject();
-    else setMenu(false);
+
+if (homeLightboxClose) {
+  homeLightboxClose.addEventListener("click", closeGalleryLightbox);
+}
+
+if (homeLightboxPrev) {
+  homeLightboxPrev.addEventListener("click", (event) => {
+    event.stopPropagation();
+
+    showGalleryImage(currentGalleryImage - 1);
+  });
+}
+
+if (homeLightboxNext) {
+  homeLightboxNext.addEventListener("click", (event) => {
+    event.stopPropagation();
+
+    showGalleryImage(currentGalleryImage + 1);
+  });
+}
+
+if (homeLightbox) {
+  homeLightbox.addEventListener("click", (event) => {
+    if (event.target === homeLightbox) {
+      closeGalleryLightbox();
+    }
+  });
+}
+
+/* =========================================================
+   PROJECT PAGE LIGHTBOX
+   ========================================================= */
+
+const projectLightbox = document.querySelector(".project-lightbox");
+
+const projectLightboxImage = document.querySelector(".project-lightbox-image");
+
+const projectLightboxClose = document.querySelector(".project-lightbox-close");
+
+const projectLightboxPrev = document.querySelector(".project-lightbox-prev");
+
+const projectLightboxNext = document.querySelector(".project-lightbox-next");
+
+const projectLightboxButtons = [
+  ...document.querySelectorAll("[data-project-lightbox]"),
+];
+
+let projectLightboxCurrent = 0;
+
+function showProjectLightboxImage() {
+  if (!projectLightboxImage || !projectLightboxButtons.length) {
+    return;
   }
-  if (lightbox.classList.contains("open") && e.key === "ArrowRight") {
-    current++;
-    showCurrent();
+
+  const button = projectLightboxButtons[projectLightboxCurrent];
+
+  const image = button.querySelector("img");
+
+  projectLightboxImage.src = button.dataset.projectLightbox;
+
+  projectLightboxImage.alt = image?.alt || "";
+}
+
+function openProjectLightbox(index) {
+  if (!projectLightbox) return;
+
+  projectLightboxCurrent = index;
+
+  showProjectLightboxImage();
+
+  projectLightbox.classList.add("is-open");
+
+  projectLightbox.setAttribute("aria-hidden", "false");
+
+  document.body.classList.add("project-lightbox-open");
+}
+
+function closeProjectLightbox() {
+  if (!projectLightbox) return;
+
+  projectLightbox.classList.remove("is-open");
+
+  projectLightbox.setAttribute("aria-hidden", "true");
+
+  document.body.classList.remove("project-lightbox-open");
+}
+
+projectLightboxButtons.forEach((button, index) => {
+  button.addEventListener("click", () => {
+    openProjectLightbox(index);
+  });
+});
+
+if (projectLightboxClose) {
+  projectLightboxClose.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeProjectLightbox();
+  });
+}
+
+if (projectLightboxPrev) {
+  projectLightboxPrev.addEventListener("click", (event) => {
+    event.stopPropagation();
+
+    projectLightboxCurrent--;
+
+    if (projectLightboxCurrent < 0) {
+      projectLightboxCurrent = projectLightboxButtons.length - 1;
+    }
+
+    showProjectLightboxImage();
+  });
+}
+
+if (projectLightboxNext) {
+  projectLightboxNext.addEventListener("click", (event) => {
+    event.stopPropagation();
+
+    projectLightboxCurrent++;
+
+    if (projectLightboxCurrent >= projectLightboxButtons.length) {
+      projectLightboxCurrent = 0;
+    }
+
+    showProjectLightboxImage();
+  });
+}
+
+if (projectLightbox) {
+  projectLightbox.addEventListener("click", (event) => {
+    if (event.target === projectLightbox) {
+      closeProjectLightbox();
+    }
+  });
+}
+
+/* =========================================================
+   KEYBOARD
+   ========================================================= */
+
+document.addEventListener("keydown", (event) => {
+  if (projectLightbox?.classList.contains("is-open")) {
+    if (event.key === "Escape") {
+      closeProjectLightbox();
+    }
+
+    if (event.key === "ArrowLeft") {
+      projectLightboxCurrent--;
+
+      if (projectLightboxCurrent < 0) {
+        projectLightboxCurrent = projectLightboxButtons.length - 1;
+      }
+
+      showProjectLightboxImage();
+    }
+
+    if (event.key === "ArrowRight") {
+      projectLightboxCurrent++;
+
+      if (projectLightboxCurrent >= projectLightboxButtons.length) {
+        projectLightboxCurrent = 0;
+      }
+
+      showProjectLightboxImage();
+    }
+
+    return;
   }
-  if (lightbox.classList.contains("open") && e.key === "ArrowLeft") {
-    current--;
-    showCurrent();
+
+  if (homeLightbox?.classList.contains("open")) {
+    if (event.key === "Escape") {
+      closeGalleryLightbox();
+    }
+
+    if (event.key === "ArrowLeft") {
+      showGalleryImage(currentGalleryImage - 1);
+    }
+
+    if (event.key === "ArrowRight") {
+      showGalleryImage(currentGalleryImage + 1);
+    }
+
+    return;
+  }
+
+  if (event.key === "Escape") {
+    setMenu(false);
   }
 });
