@@ -1968,7 +1968,6 @@ footer div {
 /*--IPad--*/
 
 @media (min-width: 601px) and (max-width: 900px) {
-
   .hero {
     min-height: auto;
     padding-top: 78px;
@@ -2004,3 +2003,281 @@ footer div {
   }
 }
 
+/*--404--/
+
+/* =========================================================
+   404 PAGE
+   ========================================================= */
+
+.error-page {
+  min-height: 100vh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  background: var(--yellow);
+  color: var(--bloom);
+  overflow: hidden;
+}
+
+.error-wrap {
+  width: min(90%, 1000px);
+  text-align: center;
+}
+
+.error-kicker {
+  margin: 0 0 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.error-wrap h1 {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: clamp(110px, 22vw, 300px);
+  font-weight: 400;
+  line-height: 0.82;
+  letter-spacing: -0.07em;
+}
+
+.error-text {
+  margin: 42px auto 0;
+  max-width: 500px;
+  font-size: clamp(17px, 2vw, 22px);
+  line-height: 1.4;
+}
+
+.error-link {
+  display: inline-block;
+  margin-top: 28px;
+  padding: 11px 16px;
+  border: 1px solid var(--bloom);
+  border-radius: 999px;
+  font-size: 12px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.error-link:hover {
+  background: var(--bloom);
+  color: var(--yellow);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+  .error-wrap {
+    width: calc(100% - 36px);
+  }
+
+  .error-wrap h1 {
+    font-size: 38vw;
+  }
+
+  .error-text {
+    margin-top: 22px;
+    font-size: 17px;
+  }
+
+  .error-link {
+    margin-top: 24px;
+  }
+}
+
+
+/* =========================================================
+   PAGE LOADER
+   ========================================================= */
+
+.page-loader {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--yellow);
+  color: var(--bloom);
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.45s ease,
+    visibility 0.45s ease;
+}
+
+/* Loader verschwindet */
+
+.page-loader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Gesamter Loader-Bereich */
+
+.loader-wrap {
+  position: relative;
+  width: clamp(330px, 42vw, 520px);
+  aspect-ratio: 1 / 1;
+}
+
+/* =========================================================
+   PUNKTE / KREIS
+   ========================================================= */
+
+.loader-orbit {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: loaderOrbit 2s linear infinite;
+}
+
+/* Einzelne Punkte */
+
+.orbit-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bloom);
+  transform: translate(-50%, -50%);
+}
+
+/* Punkte gleichmässig auf dem Kreis verteilen */
+
+.dot-1 {
+  top: 0;
+  left: 50%;
+}
+
+.dot-2 {
+  top: 14.65%;
+  left: 85.35%;
+}
+
+.dot-3 {
+  top: 50%;
+  left: 100%;
+}
+
+.dot-4 {
+  top: 85.35%;
+  left: 85.35%;
+}
+
+.dot-5 {
+  top: 100%;
+  left: 50%;
+}
+
+.dot-6 {
+  top: 85.35%;
+  left: 14.65%;
+}
+
+.dot-7 {
+  top: 50%;
+  left: 0;
+}
+
+.dot-8 {
+  top: 14.65%;
+  left: 14.65%;
+}
+
+/* NUR die Punkte drehen sich */
+
+@keyframes loaderOrbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   TEXT
+   ========================================================= */
+
+.loader-content {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* PORTFOLIO */
+
+.loader-content h2 {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: clamp(35px, 7vw, 70px);
+  font-weight: 400;
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+  white-space: nowrap;
+}
+
+.loader-content h2 span {
+  font-style: italic;
+}
+
+/* Carole Schmutz */
+
+.loader-content p {
+  margin: 16px 0 0;
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+}
+
+/* LOADING */
+
+.loader-content small {
+  margin-top: 18px;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .loader-wrap {
+    width: min(82vw, 360px);
+  }
+  .loader-content h2 {
+    font-size: clamp(48px, 15vw, 68px);
+  }
+  .loader-content p {
+    margin-top: 13px;
+    font-size: 11px;
+  }
+  .loader-content small {
+    margin-top: 15px;
+    font-size: 8px;
+  }
+  .orbit-dot {
+    width: 7px;
+    height: 7px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .loader-orbit {
+    animation: none;
+  }
+}

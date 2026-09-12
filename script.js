@@ -331,3 +331,25 @@ document.addEventListener("keydown", (event) => {
     setMenu(false);
   }
 });
+
+/*-- Loading*/
+
+const pageLoader = document.querySelector("#pageLoader");
+
+if (pageLoader) {
+  const loaderStart = performance.now();
+  const minimumLoaderTime = 1200;
+
+  window.addEventListener("load", () => {
+    const elapsed = performance.now() - loaderStart;
+    const remaining = Math.max(0, minimumLoaderTime - elapsed);
+
+    setTimeout(() => {
+      pageLoader.classList.add("is-hidden");
+
+      setTimeout(() => {
+        pageLoader.remove();
+      }, 550);
+    }, remaining);
+  });
+}
