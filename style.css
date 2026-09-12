@@ -590,14 +590,21 @@ button {
 .track {
   display: flex;
   width: max-content;
-  gap: 14px;
+  gap: 0;
   will-change: transform;
-  animation: tickerMoveH 38s linear infinite;
+  animation: photoLoop 35s linear infinite;
+}
+
+.track-set {
+  display: flex;
+  flex-shrink: 0;
+  gap: 14px;
+  padding-right: 14px;
 }
 
 .reverse .track {
   animation-direction: reverse;
-  animation-duration: 40s;
+  animation-duration: 35s;
 }
 
 .photo-marquee:hover .track {
@@ -609,6 +616,7 @@ button {
   border: 0;
   background: none;
   cursor: zoom-in;
+  flex-shrink: 0;
 }
 
 .gallery-img img {
@@ -617,17 +625,17 @@ button {
   object-fit: cover;
 }
 
-.gallery-img:nth-child(3n) img {
+.track-set .gallery-img:nth-child(3n) img {
   width: 250px;
 }
 
-@keyframes tickerMoveH {
+@keyframes photoLoop {
   from {
     transform: translateX(0);
   }
 
   to {
-    transform: translateX(-25%);
+    transform: translateX(-50%);
   }
 }
 
