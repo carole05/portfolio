@@ -643,29 +643,48 @@ button {
    TICKER
    ========================================================= */
 
-.discipline-ticker {
+/* =========================================================
+   TEXT TICKER
+   ========================================================= */
+
+/* =========================================================
+   TEXT TICKER
+   ========================================================= */
+
+.ticker {
   width: 100%;
-  padding: 9px 0;
   overflow: hidden;
+  border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
-  font-family: Georgia, serif;
-  font-size: 13px;
-  font-style: italic;
-  font-weight: 700;
-  white-space: nowrap;
+  padding: 15px 0;
 }
 
 .ticker-track {
   display: flex;
+  align-items: center;
   width: max-content;
+  white-space: nowrap;
+  animation: textTickerMove 22s linear infinite;
   will-change: transform;
-  animation: tickerMoveH 38s linear infinite;
 }
 
 .ticker-track span {
   display: block;
-  flex: 0 0 auto;
-  padding-right: 32px;
+  flex-shrink: 0;
+  font-family: Georgia, serif;
+  font-size: 17px;
+  font-style: italic;
+  line-height: 1;
+  color: var(--bloom);
+}
+
+@keyframes textTickerMove {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-25%);
+  }
 }
 
 /* =========================================================
